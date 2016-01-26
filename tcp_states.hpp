@@ -54,7 +54,10 @@ public:
 				TCB.PRC = SEG.PRC;
 			RCV.NEXT = SEG.SEQ+1;
 			send(tcp SYN & ACK);
+			tcp->state_ = SynSent::instance();
 			set_state(tcp, SynSent::instance());
+
+			tcp->state_ = State::Listen::
 		}
 	}
 };
@@ -89,6 +92,31 @@ public:
 
 		=> Listen.
 	*/
+
+	// To avoid passive/closed open, and only use one open.
+	void Closed::open(Socket& sock) {
+		src = sock;
+		// open listening connection on src;
+		state = Listen;
+	}
+
+	void Listen::open(Socket& sock) {
+		dest = sock;
+		// connect to dest;
+		state = SynSent;
+	}
+
+	Connection::Connection() : state_(State::Closed::instance()) {};
+	Connection::connect(Socket& dest) {
+		Socket sock("my ip", "random port");
+		state_->open(sock); // listen
+		state_->open(dest); // syn sent
+	}
+
+	Connection::bind(Port port) {
+		Socket sock("my ip", port);
+		state_->open(sock); // listen
+	}
 	virtual void passive_open(TCP::Connection*);
 	/*
 		<- Send SYN.

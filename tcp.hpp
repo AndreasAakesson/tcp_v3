@@ -54,7 +54,10 @@ class TCP {
 		A Connection between two Sockets.
 	*/
 	class Connection {
+	private:
+		struct TCB {
 
+		} tcb;
 	public:
 		using SuccessCallback = std::function<void(TCP::Connection conn)>;
 		using ErrorCallback = std::function<void(TCP::ConnectionException err)>;
@@ -181,7 +184,7 @@ class TCP {
 	}; // < class Connection
 
 	/// IMPLEMENTATION ///
-	Connection::Connection(IPStack& stack, Socket& source) 
+	Connection::Connection(Socket& source) 
 		: state_(TCP::Connection::Closed::instance()) {
 			src_ = &source;
 			dest_ = Socket();

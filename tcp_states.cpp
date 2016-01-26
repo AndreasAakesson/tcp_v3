@@ -77,8 +77,8 @@ void Listen::synchronize(TCP::Connection* conn) {
 	SYN-SENT
 */
 static State& SynSent::instance() {
-	static State* instance = new SynSent();
-	return *instance;
+	static State instance;
+	return instance;
 }
 
 void SynSent::synchronize(TCP::Connection* conn) {
